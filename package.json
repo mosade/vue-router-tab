@@ -22,7 +22,7 @@
   },
   "main": "dist/lib/vue-router-tab.umd.min.js",
   "scripts": {
-    "demo:dev": "vue-cli-service serve --open",
+    "demo:dev": "vue-cli-service serve",
     "demo:build": "vue-cli-service build",
     "docs:dev": "vuepress dev docs --open",
     "docs:build": "vuepress build docs",

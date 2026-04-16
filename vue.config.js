@@ -7,6 +7,12 @@ module.exports = {
 
   outputDir: isBuildLib ? 'dist/lib' : 'dist/docs/demo',
 
+  devServer: {
+    client: {
+      progress: false
+    }
+  },
+
   // webpack 链式配置
   chainWebpack: config => {
     // 移除 prefetch 插件

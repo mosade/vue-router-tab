@@ -29,12 +29,13 @@ export default {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  min-height: 0;
   background-color: rgba(#fff, 0.95);
   border-right: 1px solid #eaecef;
 
   &-menu {
-    flex: auto;
-    height: 0;
+    flex: 1 1 auto;
+    min-height: 0;
     padding-top: 1rem;
     overflow-y: auto;
 

@@ -3,32 +3,26 @@
 </template>
 
 <style lang="scss" scoped>
-::v-deep {
-  // 页面 fade 过渡
-  .page-fade {
-    &-enter-active,
-    &-leave-active {
-      transition: opacity 0.5s;
-    }
+// 页面 fade 过渡
+:deep(.page-fade-enter-active),
+:deep(.page-fade-leave-active) {
+  transition: opacity 0.5s;
+}
 
-    &-enter,
-    &-leave-to {
-      opacity: 0;
-    }
-  }
+:deep(.page-fade-enter-from),
+:deep(.page-fade-leave-to) {
+  opacity: 0;
+}
 
-  // 页签 scale 过渡
-  .tab-scale {
-    &-enter-active,
-    &-leave-active {
-      transition: opacity 0.5s, transform 0.5s;
-    }
+// 页签 scale 过渡
+:deep(.tab-scale-enter-active),
+:deep(.tab-scale-leave-active) {
+  transition: opacity 0.5s, transform 0.5s;
+}
 
-    &-enter,
-    &-leave-to {
-      transform: scale(1.5);
-      opacity: 0;
-    }
-  }
+:deep(.tab-scale-enter-from),
+:deep(.tab-scale-leave-to) {
+  transform: scale(1.5);
+  opacity: 0;
 }
 </style>
