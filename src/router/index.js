@@ -30,10 +30,11 @@ const routes = [
 
       if (match) {
         const base = match[1]
-        const matchParent = routes.find(item => item.path === base)
+        const parentPath = base.replace(/\/$/, '')
+        const matchParent = routes.find(item => item.path === parentPath)
 
         // 子路由 404
-        if (matchParent) return base + '404'
+        if (matchParent) return parentPath + '/404'
       }
 
       // 根路由 404

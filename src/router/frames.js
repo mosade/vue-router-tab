@@ -96,13 +96,14 @@ const context = require.context('../components/frames/', false, /^.*\.vue$/)
 // 生成框架路由
 const routes = context.keys().map(filePath => {
   const frame = filePath.match(/\w+/)[0]
-  const path = '/' + pascal2Kebab(frame) + '/'
+  const path = '/' + pascal2Kebab(frame)
   const { redirect, children } = frameRoutes[frame] || {}
 
   return {
     path,
+    alias: path + '/',
     component: context(filePath).default,
-    redirect: path + (redirect || 'page/1'),
+    redirect: path + '/' + (redirect || 'page/1'),
     children: children || getPageRoutes()
   }
 })
