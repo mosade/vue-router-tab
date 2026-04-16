@@ -3,26 +3,13 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { langState } from '../../plugins/lang'
 
 export default {
   name: 'LangCustom',
+
   data() {
     return {
-      currentLang: 'en',
-
-      langs: {
-        en: {
-          i18n: 'I18n Page',
-          page: 'Page {0}'
-        },
-
-        zh: {
-          i18n: '国际化页面',
-          page: '页面 {0}'
-        }
-      },
-
       tabs: [
         '/i18n/lang',
         { to: '/i18n/page/1', title: ['page', 1] },
@@ -33,25 +20,8 @@ export default {
 
   computed: {
     lang() {
-      return this.langs[this.currentLang] || this.langs.en
+      return langState.langs[langState.currentLang] || langState.langs.en
     }
-  },
-
-  beforeCreate() {
-    // 全局语言方法
-    Vue.prototype.$lang = {
-      set: lang => {
-        this.currentLang = lang
-      },
-
-      get: () => this.currentLang,
-
-      list: () => Object.keys(this.langs)
-    }
-  },
-
-  destroyed() {
-    Vue.prototype.$lang = null
   },
 
   methods: {
