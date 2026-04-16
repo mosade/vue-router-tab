@@ -1104,15 +1104,15 @@ const debounceMethod = (fn, delay = 200) => {
     }
   }
 });
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./lib/components/RouterAlive.vue?vue&type=template&id=0e28f244
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./lib/components/RouterAlive.vue?vue&type=template&id=b5190130
 
-const RouterAlivevue_type_template_id_0e28f244_hoisted_1 = {
+const RouterAlivevue_type_template_id_b5190130_hoisted_1 = {
   class: "router-alive"
 };
-function RouterAlivevue_type_template_id_0e28f244_render(_ctx, _cache, $props, $setup, $data, $options) {
+function RouterAlivevue_type_template_id_b5190130_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_router_alive_page = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.resolveComponent)("router-alive-page");
   const _component_router_view = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.resolveComponent)("router-view");
-  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", RouterAlivevue_type_template_id_0e28f244_hoisted_1, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createVNode)(_component_router_view, null, {
+  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", RouterAlivevue_type_template_id_b5190130_hoisted_1, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createVNode)(_component_router_view, null, {
     default: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(({
       Component
     }) => [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createVNode)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Transition, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.mergeProps)($options.pageTrans, {
@@ -1154,7 +1154,7 @@ function RouterAlivevue_type_template_id_0e28f244_render(_ctx, _cache, $props, $
     _: 1
   })]);
 }
-;// ./lib/components/RouterAlive.vue?vue&type=template&id=0e28f244
+;// ./lib/components/RouterAlive.vue?vue&type=template&id=b5190130
 
 ;// ./node_modules/vue-router/dist/devtools-EWN81iOl.mjs
 /* unused harmony import specifier */ var onUnmounted;
@@ -2606,7 +2606,7 @@ const RouterAlivePage = {
   setup() {
     const parentViewDepth = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.inject)(viewDepthKey, 0);
     return {
-      routeIndex: parentViewDepth + 1
+      routeIndex: parentViewDepth
     };
   },
   data() {
@@ -2903,7 +2903,7 @@ var exportHelper = __webpack_require__(621);
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(RouterAlivevue_type_script_lang_js, [['render',RouterAlivevue_type_template_id_0e28f244_render]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(RouterAlivevue_type_script_lang_js, [['render',RouterAlivevue_type_template_id_b5190130_render]])
 
 /* harmony default export */ var RouterAlive = (__exports__);
 ;// ./lib/components/TabItem.js
