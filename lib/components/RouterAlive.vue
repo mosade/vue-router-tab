@@ -194,7 +194,7 @@ export default {
     const parentViewDepth = inject(viewDepthKey, 0)
 
     return {
-      routeIndex: parentViewDepth + 1
+      routeIndex: parentViewDepth
     }
   },
 
