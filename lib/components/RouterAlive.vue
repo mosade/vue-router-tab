@@ -188,6 +188,8 @@ export default {
     }
   },
 
+  emits: ['ready', 'change'],
+
   setup() {
     const parentViewDepth = inject(viewDepthKey, 0)
 
