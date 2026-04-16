@@ -8,7 +8,7 @@ export default () => [
     meta: {
       title: route => `页面${route.params.id}`,
       icon: 'rt-icon-doc',
-      key: 'path'
+      key: 'fullPath'
     }
   },
   {
@@ -22,7 +22,7 @@ export default () => [
       title: route => `无缓存页面${route.params.id}`,
       keepAlive: false,
       icon: 'rt-icon-doc',
-      key: 'path'
+      key: 'fullPath'
     }
   },
   {
@@ -51,7 +51,7 @@ export default () => [
     meta: {
       title: route => `规则:path-${route.params.catalog}/${route.params.type}`,
       icon: 'rt-icon-log',
-      key: 'path'
+      key: 'fullPath'
     }
   },
   {

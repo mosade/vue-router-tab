@@ -43,7 +43,8 @@ const frameRoutes = {
         component: importPage('Page'),
         meta: {
           title: 'i18n:page',
-          icon: 'rt-icon-doc'
+          icon: 'rt-icon-doc',
+          key: 'fullPath'
         }
       }
     ]
@@ -58,7 +59,7 @@ const frameRoutes = {
         meta: {
           title: route => `页面外部滚动${route.params.id}`,
           icon: 'rt-icon-doc',
-          key: 'path'
+          key: 'fullPath'
         }
       },
       {

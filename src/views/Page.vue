@@ -11,7 +11,7 @@
         打开“页面{{ nextId }}”
       </router-link>
 
-      <a class="demo-btn" @click="$tabs.open(nextId, true)">
+      <a class="demo-btn" @click="$tabs.open(nextId)">
         全新打开“页面{{ nextId }}”
       </a>
     </p>
@@ -21,7 +21,7 @@
         打开“页面{{ prevId }}”
       </router-link>
 
-      <a class="demo-btn" @click="$tabs.open(prevId, true)">
+      <a class="demo-btn" @click="$tabs.open(prevId)">
         全新打开“页面{{ prevId }}”
       </a>
     </p>
@@ -68,12 +68,18 @@ import IframeOperate from './IframeOperate'
 export default {
   name: 'Page',
   components: { PageTimer, PageRouteInfo, IframeOperate },
-  data() {
-    let id = this.$route.params.id
-    return {
-      pageId: id,
-      nextId: +id + 1 + '',
-      prevId: +id - 1 + ''
+
+  computed: {
+    pageId() {
+      return this.$route.params.id
+    },
+
+    nextId() {
+      return String(+this.pageId + 1)
+    },
+
+    prevId() {
+      return String(+this.pageId - 1)
     }
   },
 
