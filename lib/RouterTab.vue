@@ -21,9 +21,7 @@
             ref="tab"
             :data="item"
             :index="index"
-            @contextmenu.native.prevent="
-              e => showContextmenu(item.id, index, e)
-            "
+            @contextmenu="e => showContextmenu(item.id, index, e)"
           />
         </transition-group>
       </tab-scroll>

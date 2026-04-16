@@ -5,12 +5,16 @@ module.exports = {
   env: {
     node: true
   },
-  extends: ['plugin:vue/recommended', 'eslint:recommended', '@vue/prettier'],
+  extends: [
+    'plugin:vue/vue3-recommended',
+    'eslint:recommended',
+    '@vue/prettier'
+  ],
   parserOptions: {
-    parser: 'babel-eslint',
-    ecmaFeatures: {
-      // 支持装饰器
-      legacyDecorators: true
+    parser: '@babel/eslint-parser',
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]]
     }
   },
   // ESlint 规则：https://eslint.org/docs/rules/
@@ -21,6 +25,8 @@ module.exports = {
     'no-unused-vars': 'warn',
     'no-empty': ['error', { allowEmptyCatch: true }],
     'no-prototype-builtins': 'off',
+    // Keep legacy demo/component names lint-safe during Vue 3 migration cleanup.
+    'vue/multi-word-component-names': 'off',
     'vue/no-v-html': 'off',
     'vue/no-unused-vars': 'warn',
     'vue/require-default-prop': 'off',

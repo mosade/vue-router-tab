@@ -1,57 +1,148 @@
 <template>
   <div class="router-alive">
-    <transition
-      v-bind="pageTrans"
-      appear
-      @after-enter="onTrans"
-      @after-leave="onTrans"
-    >
-      <keep-alive :max="max">
-        <router-view
-          v-if="alive && !onRefresh"
-          ref="page"
+    <router-view v-slot="{ Component }">
+      <transition
+        v-bind="pageTrans"
+        appear
+        @after-enter="onTrans"
+        @after-leave="onTrans"
+      >
+        <keep-alive ref="alive" :max="keepAliveMax">
+          <router-alive-page
+            v-if="Component && alive && !onRefresh"
+            :key="key"
+            :component="Component"
+            :cache-key="key"
+            :alive-path="alivePath"
+            :full-path="$route.fullPath"
+            :page-class="pageClass"
+            cached
+            @page-hook="onPageHook"
+            @page-loaded="onPageLoaded"
+          />
+        </keep-alive>
+      </transition>
+
+      <transition
+        v-bind="pageTrans"
+        appear
+        @after-enter="onTrans"
+        @after-leave="onTrans"
+      >
+        <router-alive-page
+          v-if="Component && !alive && !onRefresh"
           :key="key"
-          :class="pageClass"
-          v-on="hooks"
+          :component="Component"
+          :cache-key="key"
+          :alive-path="alivePath"
+          :full-path="$route.fullPath"
+          :page-class="pageClass"
           @page-loaded="onPageLoaded"
         />
-      </keep-alive>
-    </transition>
-
-    <transition
-      v-bind="pageTrans"
-      appear
-      @after-enter="onTrans"
-      @after-leave="onTrans"
-    >
-      <router-view
-        v-if="!alive && !onRefresh"
-        ref="page"
-        :key="key"
-        :class="pageClass"
-      />
-    </transition>
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <script>
-import { remove, mapGetters, getTransOpt, getCtorId } from '../util'
+import { h, inject } from 'vue'
+import { viewDepthKey } from 'vue-router'
+import {
+  mapGetters,
+  getTransOpt,
+  getCtorId,
+  getComponentOptions
+} from '../util'
 import RouteMatch from '../util/RouteMatch'
 
-// 页面监听钩子
-const PAGE_HOOKS = [
-  'created',
-  'mounted',
-  'activated',
-  'deactivated',
-  'destroyed'
-]
+const RouterAlivePage = {
+  name: 'RouterAlivePage',
+  inheritAttrs: false,
+
+  props: {
+    component: {
+      type: [Object, Function],
+      required: true
+    },
+    cacheKey: {
+      type: String,
+      required: true
+    },
+    alivePath: {
+      type: String,
+      required: true
+    },
+    fullPath: {
+      type: String,
+      required: true
+    },
+    pageClass: {
+      type: [Array, Object, String],
+      default: 'router-alive-page'
+    },
+    cached: Boolean
+  },
+
+  emits: ['page-hook', 'page-loaded'],
+
+  created() {
+    this.emitHook('created')
+  },
+
+  mounted() {
+    this.emitHook('mounted')
+  },
+
+  activated() {
+    this.emitHook('activated')
+  },
+
+  deactivated() {
+    this.emitHook('deactivated')
+  },
+
+  unmounted() {
+    this.emitHook('unmounted')
+  },
+
+  methods: {
+    getPageVm() {
+      const page = this.$refs.page
+      return Array.isArray(page) ? page[0] : page
+    },
+
+    emitHook(name) {
+      if (!this.cached) return
+
+      this.$emit('page-hook', {
+        name,
+        key: this.cacheKey,
+        alivePath: this.alivePath,
+        fullPath: this.fullPath,
+        vm: this.getPageVm()
+      })
+    },
+
+    onPageLoaded() {
+      this.$emit('page-loaded')
+    }
+  },
+
+  render() {
+    return h(this.component, {
+      ref: 'page',
+      class: this.pageClass,
+      onPageLoaded: this.onPageLoaded
+    })
+  }
+}
 
 /**
  * 路由缓存控件
  */
 export default {
   name: 'RouterAlive',
+  components: { RouterAlivePage },
 
   provide() {
     // 提供实例给子组件调用
@@ -97,6 +188,14 @@ export default {
     }
   },
 
+  setup() {
+    const parentViewDepth = inject(viewDepthKey, 0)
+
+    return {
+      routeIndex: parentViewDepth + 1
+    }
+  },
+
   data() {
     // 缓存记录
     this.cache = {}
@@ -104,9 +203,6 @@ export default {
     return {
       // 路由匹配信息
       routeMatch: new RouteMatch(this),
-
-      // 页面路由索引
-      routeIndex: this.getRouteIndex(),
 
       // 是否正在更新
       onRefresh: false
@@ -125,12 +221,8 @@ export default {
       'alivePath'
     ]),
 
-    // 监听子页面钩子
-    hooks() {
-      return PAGE_HOOKS.reduce((events, hook) => {
-        events['hook:' + hook] = () => this.pageHook(hook)
-        return events
-      }, {})
+    keepAliveMax() {
+      return this.max > 0 ? this.max : undefined
     },
 
     // 页面过渡
@@ -185,66 +277,26 @@ export default {
     }
   },
 
-  mounted() {
-    // 获取 keepAlive 组件实例
-    this.$refs.alive = this._vnode.children[0].child._vnode.componentInstance
-  },
-
   // 销毁后清理
-  destroyed() {
+  unmounted() {
     this.cache = null
     this.routeMatch = null
     this._match = null
-    this.$refs.alive = null
   },
 
   methods: {
-    // 获取页面路由索引
-    getRouteIndex() {
-      let cur = this
-      let depth = -1 // 路由深度
-
-      while (cur && depth < 0) {
-        const { data } = cur.$vnode || {}
-        if (data && data.routerView) {
-          depth = data.routerViewDepth
-        } else {
-          cur = cur.$parent
-        }
-      }
-
-      return depth + 1
-    },
-
     // 移除缓存
     remove(key = this.key) {
-      const $alive = this.$refs.alive
-
-      if (!$alive) return
-
       const cacheItem = this.cache[key]
-      const { cache, keys } = $alive
 
-      // 销毁缓存组件实例，清理 RouterAlive 缓存记录
+      // 清理 RouterAlive 缓存记录
       if (cacheItem) {
-        cacheItem.vm.$destroy()
         cacheItem.vm = null
         this.cache[key] = null
       }
 
       // 清理 keepAlive 缓存记录
-      Object.entries(cache).find(([id, item]) => {
-        const vm = item?.componentInstance
-        if (vm?.$vnode?.data?.key === key) {
-          // 销毁组件实例
-          vm.$destroy()
-
-          cache[id] = null
-          remove(keys, id)
-
-          return true
-        }
-      })
+      this.pruneKeepAliveCache(key)
     },
 
     // 刷新
@@ -264,39 +316,56 @@ export default {
       this.onRefresh = true
     },
 
+    getPageVm(key = this.key) {
+      const cacheItem = this.cache && this.cache[key]
+      return (cacheItem && cacheItem.vm) || null
+    },
+
+    pruneKeepAliveCache(key) {
+      const keepAlive = this.$refs.alive
+      const keepAliveInstance = keepAlive && keepAlive.$
+      const cache = keepAliveInstance && keepAliveInstance.__v_cache
+      const prune = keepAliveInstance?.ctx?.pruneCacheEntry
+
+      if (!cache) return
+      if (typeof prune === 'function') {
+        prune(key)
+      } else if (typeof cache.delete === 'function') {
+        cache.delete(key)
+      }
+    },
+
     // 缓存页面组件钩子
-    pageHook(hook) {
-      const handler = this[`pageHook:${hook}`]
-      if (typeof handler === 'function') handler()
+    onPageHook(payload) {
+      const handler = this[`pageHook:${payload.name}`]
+      if (typeof handler === 'function') handler(payload)
     },
 
     // 页面创建
-    'pageHook:created'() {
-      this.cache[this.key] = {
-        alivePath: this.alivePath,
-        fullPath: this.$route.fullPath
+    'pageHook:created'({ key, alivePath, fullPath }) {
+      this.cache[key] = {
+        alivePath,
+        fullPath
       }
     },
 
     // 页面挂载
-    'pageHook:mounted'() {
-      this.cache[this.key].vm = this.$refs.page
+    'pageHook:mounted'({ key, vm }) {
+      this.cache[key].vm = vm
 
       // 重置初始滚动位置
       this.resetScrollPosition()
     },
 
     // 页面激活
-    'pageHook:activated'() {
-      const pageVm = this.$refs.page
-
+    'pageHook:activated'({ vm: pageVm }) {
       // 热重载更新
       if (this.checkHotReloading()) return
 
       // 嵌套路由缓存导致页面不匹配时强制更新
       if (this.nestForceUpdate) {
         delete this.nestForceUpdate
-        pageVm.$forceUpdate()
+        pageVm && pageVm.$forceUpdate()
       }
 
       // 还原滚动位置
@@ -312,18 +381,15 @@ export default {
     },
 
     // 页面销毁后清理 cache
-    async 'pageHook:destroyed'() {
+    async 'pageHook:unmounted'({ key, vm }) {
       await this.$nextTick()
 
       if (!this.cache) return
+      const cacheItem = this.cache[key]
 
-      // 清理已销毁页面的缓存信息
-      Object.entries(this.cache).forEach(([key, item]) => {
-        const { vm } = item || {}
-        if (vm && vm._isDestroyed) {
-          this.remove(key)
-        }
-      })
+      if (cacheItem && (!vm || cacheItem.vm === vm)) {
+        this.cache[key] = null
+      }
     },
 
     // 页面过渡后结束刷新状态
@@ -357,7 +423,9 @@ export default {
 
     // 检测热重载
     checkHotReloading() {
-      const pageVm = this.$refs.page
+      const pageVm = this.getPageVm()
+
+      if (!pageVm) return false
       const lastCid = pageVm._lastCtorId
       const cid = (pageVm._lastCtorId = getCtorId(pageVm))
 
@@ -379,12 +447,11 @@ export default {
 
     // 保存滚动位置
     saveScrollPosition() {
-      const pageVm = this.$refs.page
+      const pageVm = this.getPageVm()
 
       if (!pageVm) return
-
       // 页面内部配置的滚动元素
-      let { pageScroller } = pageVm.$vnode.componentOptions.Ctor.options
+      let { pageScroller } = getComponentOptions(pageVm)
 
       if (typeof pageScroller === 'string' && pageScroller.length) {
         pageScroller = pageScroller.split(/\s?,\s?/)
@@ -422,11 +489,10 @@ export default {
 
     // 还原滚动位置
     restoreScrollPosition() {
-      const pageVm = this.$refs.page
+      const pageVm = this.getPageVm()
       const position = pageVm?._pageScrollPosition
 
       if (!position) return
-
       Object.entries(position).forEach(([selector, pos]) => {
         const el = this.getScroller(selector)
         if (el) {
@@ -443,7 +509,6 @@ export default {
       const el = this.getScroller('$' + this.pageScroller)
 
       if (!el) return
-
       el.scrollLeft = 0
       el.scrollTop = 0
     },

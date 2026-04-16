@@ -1,10 +1,7 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 import frameRoutes from './frames'
 import route404 from './404'
-
-Vue.use(Router)
 
 // 全局 404 路由
 const globalRoute404 = {
@@ -27,15 +24,13 @@ const routes = [
 
   // 未匹配的路由 404
   {
-    path: '*',
+    path: '/:pathMatch(.*)*',
     redirect(to) {
       const match = /^(\/[^/]+\/)/.exec(to.path)
 
       if (match) {
         const base = match[1]
-        const matchParent = $router.options.routes.find(
-          item => item.path === base
-        )
+        const matchParent = routes.find(item => item.path === base)
 
         // 子路由 404
         if (matchParent) return base + '404'
@@ -48,6 +43,9 @@ const routes = [
 ]
 
 // Vue Router 实例
-const $router = new Router({ routes })
+const $router = createRouter({
+  history: createWebHashHistory(),
+  routes
+})
 
 export default $router

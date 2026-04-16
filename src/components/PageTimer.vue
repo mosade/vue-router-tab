@@ -28,7 +28,7 @@ export default {
     this.clearPageTimer()
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.clearPageTimer()
   },
 
