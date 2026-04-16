@@ -775,9 +775,15 @@ function equalPath(path1, path2) {
      * @param {Boolean | String} [refresh = true] 是否全新打开，如果为 `sameTab` 则仅同一个页签才全新打开
      */
     async open(path, isReplace = false, refresh = true) {
+      if (!this.$alive) {
+        try {
+          await this.$router[isReplace ? 'replace' : 'push'](path);
+        } catch (e) {}
+        return false;
+      }
       const curId = this.activeTabId;
       const tarId = this.getRouteKey(path);
-      const isSameTab = equalPath(curId, tarId);
+      const isSameTab = !!curId && !!tarId && equalPath(curId, tarId);
 
       // 打开路由与当前路由相同页签才刷新
       refresh === 'sameTab' && (refresh = isSameTab);
@@ -790,6 +796,7 @@ function equalPath(path1, path2) {
     },
     // 移除 tab 项
     async removeTab(id, force = false) {
+      if (!this.$alive) return false;
       let {
         items
       } = this;
@@ -881,6 +888,7 @@ function equalPath(path1, path2) {
     },
     // 刷新指定页签
     async refreshTab(id = this.activeTabId, force = false) {
+      if (!this.$alive) return false;
       try {
         if (!force) await this.leavePage(id, 'refresh');
         this.$alive.refresh(id);
@@ -893,6 +901,7 @@ function equalPath(path1, path2) {
      * @param {Boolean} [force = false] 是否强制刷新，如果强制则忽略页面 beforePageLeave
      */
     async refreshAll(force = false) {
+      if (!this.$alive) return false;
       const {
         cache
       } = this.$alive;
@@ -908,6 +917,11 @@ function equalPath(path1, path2) {
      * @param {location} [to = this.defaultPath] 重置后跳转页面
      */
     reset(to = this.defaultPath) {
+      if (!this.$alive) {
+        this.$router.replace(to);
+        return false;
+      }
+
       // 遍历删除缓存
       this.items.forEach(({
         id
@@ -943,6 +957,10 @@ const leaveGuard = () => (to, from, next) => {
     alivePath
   } = $alive && $alive.cache[toId] || emptyObj;
   const matched = $tabs.matchRoute(to);
+  if (!matched) {
+    next();
+    return;
+  }
   let id, type;
   if (alivePath && alivePath !== matched.alivePath) {
     // 页签地址被替换：to 存在缓存但缓存路由不一致
@@ -1104,15 +1122,15 @@ const debounceMethod = (fn, delay = 200) => {
     }
   }
 });
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./lib/components/RouterAlive.vue?vue&type=template&id=45d29035
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/cli-service/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./lib/components/RouterAlive.vue?vue&type=template&id=0e28f244
 
-const RouterAlivevue_type_template_id_45d29035_hoisted_1 = {
+const RouterAlivevue_type_template_id_0e28f244_hoisted_1 = {
   class: "router-alive"
 };
-function RouterAlivevue_type_template_id_45d29035_render(_ctx, _cache, $props, $setup, $data, $options) {
+function RouterAlivevue_type_template_id_0e28f244_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_router_alive_page = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.resolveComponent)("router-alive-page");
   const _component_router_view = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.resolveComponent)("router-view");
-  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", RouterAlivevue_type_template_id_45d29035_hoisted_1, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_.createVNode)(_component_router_view, null, {
+  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", RouterAlivevue_type_template_id_0e28f244_hoisted_1, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_.createVNode)(_component_router_view, null, {
     default: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.withCtx)(({
       Component
     }) => [(0,external_commonjs_vue_commonjs2_vue_root_Vue_.createVNode)(external_commonjs_vue_commonjs2_vue_root_Vue_.Transition, (0,external_commonjs_vue_commonjs2_vue_root_Vue_.mergeProps)($options.pageTrans, {
@@ -1154,7 +1172,7 @@ function RouterAlivevue_type_template_id_45d29035_render(_ctx, _cache, $props, $
     _: 1
   })]);
 }
-;// ./lib/components/RouterAlive.vue?vue&type=template&id=45d29035
+;// ./lib/components/RouterAlive.vue?vue&type=template&id=0e28f244
 
 ;// ./node_modules/vue-router/dist/devtools-EWN81iOl.mjs
 /* unused harmony import specifier */ var onUnmounted;
@@ -2602,6 +2620,7 @@ const RouterAlivePage = {
       type: [String, Object]
     }
   },
+  emits: ['ready', 'change'],
   setup() {
     const parentViewDepth = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.inject)(viewDepthKey, 0);
     return {
@@ -2902,7 +2921,7 @@ var exportHelper = __webpack_require__(621);
 
 
 ;
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(RouterAlivevue_type_script_lang_js, [['render',RouterAlivevue_type_template_id_45d29035_render]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(RouterAlivevue_type_script_lang_js, [['render',RouterAlivevue_type_template_id_0e28f244_render]])
 
 /* harmony default export */ var RouterAlive = (__exports__);
 ;// ./lib/components/TabItem.js
@@ -2915,6 +2934,15 @@ const TRANSFER_PREFIX = 'RouterTabDragSortIndex:';
 // 排序拖拽数据
 // 用以解决双核浏览器兼容模式下无法通过 dataTransfer.getData 获取数据
 let dragSortData = null;
+function hasSlotContent(nodes) {
+  return Array.isArray(nodes) && nodes.some(node => {
+    if (!node || node.type === external_commonjs_vue_commonjs2_vue_root_Vue_.Comment) return false;
+    if (node.type === external_commonjs_vue_commonjs2_vue_root_Vue_.Text) {
+      return String(node.children || '').trim().length > 0;
+    }
+    return true;
+  });
+}
 
 // 页签项
 // @vue/component
@@ -3031,7 +3059,7 @@ let dragSortData = null;
   // 使用 jsx render 模式替换 template，避免 Vue 2.5.22 版本不支持子组件使用父组件的 slot 导致出错。
   render() {
     const RouterLink = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.resolveComponent)('RouterLink');
-    const slot = this.$tabs.$slots.default || (() => this.slotDefault());
+    const slot = this.$tabs.$slots.default;
     return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.h)(RouterLink, {
       custom: true,
       to: this.to
@@ -3067,7 +3095,10 @@ let dragSortData = null;
               this.close();
             }
           }
-        }, slot(this));
+        }, (() => {
+          const slotContent = slot && slot(this);
+          return hasSlotContent(slotContent) ? slotContent : this.slotDefault();
+        })());
       }
     });
   }
@@ -3704,13 +3735,15 @@ const RouterTab = {
       // 页签项
       onDragSort: false,
       // 拖拽排序中
+      aliveInstance: null,
+      // RouterAlive 实例
       aliveReady: false // RouterAlive 初始化
     };
   },
   computed: {
     // routerAlive
     $alive() {
-      return this.aliveReady ? this.$refs.routerAlive : null;
+      return this.aliveReady ? this.aliveInstance : null;
     },
     // 当前激活的页签 id
     activeTabId() {
@@ -3753,13 +3786,14 @@ const RouterTab = {
     if (globals?.$tabs === this) {
       globals.$tabs = null;
     }
+    this.aliveInstance = null;
     clearCurrentTabs(this);
   },
   methods: {
     // RouterAlive 组件就绪
     onAliveReady($alive) {
       // 获取 keepAlive 组件实例
-      this.$refs.routerAlive = $alive;
+      this.aliveInstance = $alive;
       this.aliveReady = true;
       this.initTabs();
     },
@@ -3854,20 +3888,22 @@ const RouterTab = {
     },
     // 重载路由视图
     async reload() {
-      this.$alive.reload();
+      this.$alive && this.$alive.reload();
     },
     // 匹配路由信息
     matchRoute($route) {
-      return this.$alive.matchRoute($route);
+      return this.$alive && this.$alive.matchRoute($route);
     },
     // 获取路由缓存 key
     getRouteKey(route = this.$route) {
-      return this.matchRoute(route).key;
+      const matched = this.matchRoute(route);
+      return matched ? matched.key : '';
     },
     // 从路由地址匹配页签 id
     getIdByPath(path, match = true) {
       if (!path) return;
       const matched = this.matchRoute(path);
+      if (!matched) return;
       const {
         key
       } = matched;
