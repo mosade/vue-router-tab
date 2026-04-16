@@ -4,18 +4,14 @@
 
     <page-timer />
 
-    <p>
-      页面在页签关闭/刷新/被替换时将会确认提示
-    </p>
+    <p>页面在页签关闭/刷新/被替换时将会确认提示</p>
 
     <p>
       <a class="demo-btn" @click="$tabs.refresh(null, true, false)">
         刷新页签
       </a>
 
-      <a class="demo-btn" @click="$tabs.close({ force: false })">
-        关闭页签
-      </a>
+      <a class="demo-btn" @click="$tabs.close({ force: false })">关闭页签</a>
 
       <router-link class="demo-btn" :to="`?id=${+($route.query.id || 0) + 1}`">
         替换页签
@@ -25,9 +21,7 @@
         离开路由
       </router-link>
 
-      <a class="demo-btn" @click="reload">
-        刷新浏览器
-      </a>
+      <a class="demo-btn" @click="reload">刷新浏览器</a>
     </p>
   </div>
 </template>

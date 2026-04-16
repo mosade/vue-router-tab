@@ -56,9 +56,7 @@
     </div>
 
     <template v-if="/^\/iframe\//.test($route.path)">
-      <h3 class="text-strong">
-        提示：
-      </h3>
+      <h3 class="text-strong">提示：</h3>
 
       <p>
         开启浏览器开发者工具的 console 页签，打开 Iframe 页签并查看

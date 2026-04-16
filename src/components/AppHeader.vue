@@ -15,7 +15,8 @@ import SiteLink from './SiteLink.vue'
 
 export default {
   name: 'AppHeader',
-  components: { SiteLink }
+  components: { SiteLink },
+  emits: ['sidebar-change']
 }
 </script>
 
@@ -81,7 +82,7 @@ export default {
       display: none;
     }
 
-    ::v-deep a {
+    :deep(a) {
       margin: 0 0.3em;
     }
   }

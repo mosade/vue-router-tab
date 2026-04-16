@@ -4,6 +4,7 @@ import ScrollPosition from './ScrollPosition.vue'
 export default {
   name: 'ScrollAsync',
   extends: ScrollPosition,
+  emits: ['page-loaded'],
 
   activated() {
     this.list = []

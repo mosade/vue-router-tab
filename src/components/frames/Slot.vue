@@ -65,9 +65,9 @@ export default {
 }
 
 // 页签前后插槽样式
-.router-tab ::v-deep {
-  .router-tab__slot-start,
-  .router-tab__slot-end {
+.router-tab {
+  :deep(.router-tab__slot-start),
+  :deep(.router-tab__slot-end) {
     display: flex;
     align-items: center;
   }
