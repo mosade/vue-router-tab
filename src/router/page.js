@@ -13,7 +13,7 @@ export default () => [
   },
   {
     path: 'no-cache',
-    redirect: 'no-cache/1'
+    redirect: route => `${route.path}/1`
   },
   {
     path: 'no-cache/:id',
@@ -27,11 +27,11 @@ export default () => [
   },
   {
     path: 'rule',
-    redirect: 'rule/default/a/1'
+    redirect: route => `${route.path}/default/a/1`
   },
   {
     path: 'rule/default',
-    redirect: 'rule/default/a/1'
+    redirect: route => `${route.path}/a/1`
   },
   {
     path: 'rule/default/:catalog/:type',
@@ -43,7 +43,7 @@ export default () => [
   },
   {
     path: 'rule/path',
-    redirect: 'rule/path/a/1'
+    redirect: route => `${route.path}/a/1`
   },
   {
     path: 'rule/path/:catalog/:type',
@@ -56,7 +56,7 @@ export default () => [
   },
   {
     path: 'rule/fullPath',
-    redirect: 'rule/fullPath/a/1'
+    redirect: route => `${route.path}/a/1`
   },
   {
     path: 'rule/fullPath/:catalog/:type',
@@ -70,7 +70,7 @@ export default () => [
   },
   {
     path: 'rule/custom',
-    redirect: 'rule/custom/a/1'
+    redirect: route => `${route.path}/a/1`
   },
   {
     path: 'rule/custom/:catalog/:type',

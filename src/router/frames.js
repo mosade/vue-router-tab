@@ -11,7 +11,7 @@ const pascal2Kebab = str =>
 // 需要自定义的框架路由
 const frameRoutes = {
   Reuse: {
-    redirect: 'rule/default/'
+    redirect: 'rule/default/a/1'
   },
 
   Iframe: {
